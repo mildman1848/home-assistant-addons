@@ -1,6 +1,6 @@
 ---
 name: Neolink
-version: 0.1.0
+version: 0.1.1
 slug: neolink
 description: Reolink proprietary camera protocol to RTSP bridge
 url: https://github.com/mildman1848/home-assistant-addons/tree/main/neolink
@@ -11,7 +11,6 @@ startup: application
 boot: auto
 init: false
 image: ghcr.io/mildman1848/neolink-{arch}
-webui: ""
 ports:
   8554/tcp: 8554
 ports_description:
