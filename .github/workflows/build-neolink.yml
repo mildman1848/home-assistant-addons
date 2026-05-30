@@ -25,6 +25,8 @@ jobs:
             platform: linux/amd64
           - arch: aarch64
             platform: linux/arm64
+          - arch: armv7
+            platform: linux/arm/v7
     steps:
       - uses: actions/checkout@v6
       - uses: docker/setup-qemu-action@v4
@@ -45,4 +47,4 @@ jobs:
             BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base-debian:bookworm
             BUILD_ARCH=${{ matrix.arch }}
             NEOLINK_VERSION=v0.6.2
-          tags: ghcr.io/mildman1848/neolink-${{ matrix.arch }}:0.1.0
+          tags: ghcr.io/mildman1848/neolink-${{ matrix.arch }}:0.1.1

@@ -7,6 +7,7 @@ url: https://github.com/mildman1848/home-assistant-addons/tree/main/neolink
 arch:
   - amd64
   - aarch64
+  - armv7
 startup: application
 boot: auto
 init: false
