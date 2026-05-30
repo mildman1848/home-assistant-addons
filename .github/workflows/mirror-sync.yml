@@ -23,7 +23,7 @@ jobs:
     if: github.repository == 'mildman1848/home-assistant-addons'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           fetch-tags: true

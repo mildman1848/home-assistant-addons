@@ -1,5 +1,7 @@
 ignored:
-  # apt-get upgrade is discouraged in generic Dockerfiles, but Home Assistant base images are moving targets
-  # and the current Neolink Dockerfile follows the upstream runtime dependency pattern conservatively.
+  # Home Assistant add-ons use ARG BUILD_FROM + build.yaml, so Hadolint cannot see the pinned base image.
+  - DL3006
+  # We install runtime dependencies from the HA base image package repositories; pinning every Debian package
+  # here would be noisy and counterproductive for this small add-on wrapper.
   - DL3008
 failure-threshold: warning
