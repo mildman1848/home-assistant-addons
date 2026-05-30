@@ -1,0 +1,56 @@
+---
+name: Mirror Sync to Codeberg
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEBERG_REPO: codeberg.org/${{ secrets.CODEBERG_USERNAME }}/home-assistant-addons.git
+
+jobs:
+  mirror-to-codeberg:
+    name: Mirror to Codeberg
+    runs-on: ubuntu-latest
+    if: github.repository == 'mildman1848/home-assistant-addons'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Git config
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+
+      - name: Mirror to Codeberg
+        env:
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+          CODEBERG_USERNAME: ${{ secrets.CODEBERG_USERNAME }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CODEBERG_TOKEN}" ] || [ -z "${CODEBERG_USERNAME}" ]; then
+            echo "::warning::CODEBERG_TOKEN and CODEBERG_USERNAME secrets are not configured; skipping Codeberg mirror."
+            exit 0
+          fi
+          git remote add codeberg "https://${CODEBERG_USERNAME}:${CODEBERG_TOKEN}@${CODEBERG_REPO}" || \
+            git remote set-url codeberg "https://${CODEBERG_USERNAME}:${CODEBERG_TOKEN}@${CODEBERG_REPO}"
+          git push --mirror codeberg
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Mirror Sync to Codeberg" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Status: ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Target: https://codeberg.org/mildman1848/home-assistant-addons" >> "$GITHUB_STEP_SUMMARY"

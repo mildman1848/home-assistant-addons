@@ -1,0 +1,42 @@
+---
+name: Permission check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/rootfs/etc/services.d/**/run'
+      - '**/rootfs/etc/services.d/**/finish'
+      - '**/rootfs/etc/services.d/**/check'
+      - '**/rootfs/etc/cont-init.d/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/rootfs/etc/services.d/**/run'
+      - '**/rootfs/etc/services.d/**/finish'
+      - '**/rootfs/etc/services.d/**/check'
+      - '**/rootfs/etc/cont-init.d/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  permission-check:
+    name: Executable scripts are marked executable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check executable bits
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r -d '' file; do
+            if [ ! -x "$file" ]; then
+              echo "::error file=${file}::File must be executable"
+              failed=1
+            fi
+          done < <(find . -type f             \( -path '*/rootfs/etc/services.d/*/run'             -o -path '*/rootfs/etc/services.d/*/finish'             -o -path '*/rootfs/etc/services.d/*/check'             -o -path '*/rootfs/etc/cont-init.d/*' \) -print0)
+          exit "$failed"

@@ -1,0 +1,45 @@
+name: Feature Request
+description: Suggest an improvement for an add-on or this repository
+title: "[FEAT] "
+labels: [enhancement]
+body:
+  - type: checkboxes
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I have searched existing issues and pull requests
+          required: true
+        - label: I considered whether this belongs upstream instead
+          required: true
+
+  - type: dropdown
+    attributes:
+      label: Area
+      options:
+        - Neolink add-on
+        - Frigate integration documentation
+        - CI / repository maintenance
+        - New add-on request
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Feature description
+      description: What should change?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Motivation
+      description: Why is this useful?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Possible implementation
+      description: Optional technical idea, config snippet, or reference.
+      render: yaml

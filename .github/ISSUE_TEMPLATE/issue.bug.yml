@@ -1,0 +1,80 @@
+name: Bug Report
+description: File a bug report for an add-on
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please do not paste real passwords, tokens, camera credentials, private URLs, or public IPs.
+
+  - type: checkboxes
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I have searched existing issues
+          required: true
+        - label: I have read the relevant add-on documentation
+          required: true
+        - label: I removed secrets/passwords/tokens from logs and config snippets
+          required: true
+
+  - type: dropdown
+    attributes:
+      label: Add-on
+      options:
+        - Neolink
+        - Repository / CI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Current behavior
+      description: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Install add-on ...
+        2. Configure ...
+        3. Start ...
+        4. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Environment
+      value: |
+        - Home Assistant version:
+        - Supervisor version:
+        - Add-on version:
+        - Hardware/architecture: amd64/aarch64
+        - Installation type: HAOS / Supervised / Container
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Add-on configuration redacted
+      description: Paste relevant configuration with secrets removed.
+      render: yaml
+
+  - type: textarea
+    attributes:
+      label: Add-on logs redacted
+      description: Paste relevant logs with secrets removed.
+      render: shell
+    validations:
+      required: true

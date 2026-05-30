@@ -1,0 +1,5 @@
+ignored:
+  # apt-get upgrade is discouraged in generic Dockerfiles, but Home Assistant base images are moving targets
+  # and the current Neolink Dockerfile follows the upstream runtime dependency pattern conservatively.
+  - DL3008
+failure-threshold: warning

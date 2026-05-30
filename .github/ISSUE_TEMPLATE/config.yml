@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/mildman1848/home-assistant-addons
+    about: Read the add-on documentation before opening an issue.
+  - name: Home Assistant Add-on documentation
+    url: https://developers.home-assistant.io/docs/add-ons/
+    about: Upstream Home Assistant add-on development documentation.
