@@ -1,0 +1,16 @@
+configuration:
+  log_level:
+    name: Log level
+    description: Controls Neolink log verbosity.
+  bind:
+    name: Bind address
+    description: IP address used by the Neolink RTSP server.
+  bind_port:
+    name: Bind port
+    description: TCP port used by the Neolink RTSP server.
+  rtsp_users:
+    name: RTSP users
+    description: Optional users allowed to access Neolink RTSP streams.
+  cameras:
+    name: Cameras
+    description: Reolink cameras to expose as RTSP streams.

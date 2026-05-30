@@ -1,0 +1,74 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+CONFIG_PATH="/data/options.json"
+NEOLINK_CONFIG="/etc/neolink.toml"
+LOG_LEVEL="$(jq -r '.log_level // "info"' "${CONFIG_PATH}")"
+
+mkdir -p /config /etc
+
+bashio::log.info "Generating Neolink configuration"
+
+{
+    bind="$(jq -r '.bind // "0.0.0.0"' "${CONFIG_PATH}")"
+    bind_port="$(jq -r '.bind_port // 8554' "${CONFIG_PATH}")"
+
+    printf 'bind = "%s"
+' "${bind}"
+    printf 'bind_port = %s
+
+' "${bind_port}"
+
+    users_count="$(jq '.rtsp_users | length' "${CONFIG_PATH}")"
+    if [[ "${users_count}" -gt 0 ]]; then
+        jq -c '.rtsp_users[]' "${CONFIG_PATH}" | while read -r user; do
+            name="$(jq -r '.name' <<<"${user}")"
+            password="$(jq -r '.password' <<<"${user}")"
+            printf '[[users]]
+'
+            printf 'name = "%s"
+' "${name}"
+            printf 'pass = "%s"
+
+' "${password}"
+        done
+    fi
+
+    jq -c '.cameras[]' "${CONFIG_PATH}" | while read -r camera; do
+        name="$(jq -r '.name' <<<"${camera}")"
+        username="$(jq -r '.username' <<<"${camera}")"
+        password="$(jq -r '.password' <<<"${camera}")"
+        address="$(jq -r '.address' <<<"${camera}")"
+        stream="$(jq -r '.stream // "both"' <<<"${camera}")"
+
+        printf '[[cameras]]
+'
+        printf 'name = "%s"
+' "${name}"
+        printf 'username = "%s"
+' "${username}"
+        printf 'password = "%s"
+' "${password}"
+        printf 'address = "%s"
+' "${address}"
+        if [[ "${stream}" != "both" ]]; then
+            printf 'stream = "%s"
+' "${stream}"
+        fi
+        if [[ "${users_count}" -gt 0 ]]; then
+            printf 'permitted_users = [ "anyone" ]
+'
+        fi
+        printf '
+'
+    done
+} > "${NEOLINK_CONFIG}"
+
+chmod 0600 "${NEOLINK_CONFIG}"
+
+# Store a redacted copy for easier support/debugging.
+sed -E 's/(password|pass) = ".*"/ = "REDACTED"/' "${NEOLINK_CONFIG}" > /config/neolink.redacted.toml
+
+bashio::log.info "Neolink config generated at ${NEOLINK_CONFIG}"
+bashio::log.debug "Configured log level: ${LOG_LEVEL}"

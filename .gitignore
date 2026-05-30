@@ -1,0 +1,16 @@
+# Secrets and local overrides
+.env
+*.secret
+secrets.yaml
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Build artifacts
+build/
+dist/
+*.tar
+*.tar.gz

@@ -1,0 +1,44 @@
+---
+name: Neolink
+version: 0.1.0
+slug: neolink
+description: Reolink proprietary camera protocol to RTSP bridge
+url: https://github.com/mildman1848/home-assistant-addons/tree/main/neolink
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: auto
+init: false
+image: ghcr.io/mildman1848/neolink-{arch}
+webui: ""
+ports:
+  8554/tcp: 8554
+ports_description:
+  8554/tcp: RTSP server
+map:
+  - addon_config:rw
+options:
+  log_level: info
+  bind: 0.0.0.0
+  bind_port: 8554
+  rtsp_users: []
+  cameras:
+    - name: reolink_e1
+      username: admin
+      password: ""
+      address: 192.168.200.90:9000
+      stream: both
+schema:
+  log_level: list(error|warn|info|debug|trace)
+  bind: str
+  bind_port: port
+  rtsp_users:
+    - name: match(^[A-Za-z0-9_-]+$)
+      password: password
+  cameras:
+    - name: match(^[A-Za-z0-9_-]+$)
+      username: str
+      password: password
+      address: str
+      stream: list(both|mainStream|subStream)

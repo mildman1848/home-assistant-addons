@@ -1,0 +1,26 @@
+---
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install lint tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck yamllint
+      - name: YAML lint
+        run: yamllint .
+      - name: Shellcheck
+        run: |
+          find . -type f             \( -name '*.sh' -o -path '*/rootfs/etc/services.d/*/run' -o -path '*/rootfs/etc/cont-init.d/*' \)             -print0 | xargs -0 -r shellcheck

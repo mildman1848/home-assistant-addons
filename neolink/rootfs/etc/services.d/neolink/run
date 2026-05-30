@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+CONFIG_PATH="/data/options.json"
+LOG_LEVEL="$(jq -r '.log_level // "info"' "${CONFIG_PATH}")"
+export RUST_LOG="${LOG_LEVEL}"
+
+bashio::log.info "Starting Neolink RTSP bridge"
+exec /usr/local/bin/neolink rtsp --config /etc/neolink.toml

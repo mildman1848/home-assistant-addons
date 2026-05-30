@@ -1,0 +1,11 @@
+---
+build_from:
+  amd64: ghcr.io/home-assistant/amd64-base-debian:bookworm
+  aarch64: ghcr.io/home-assistant/aarch64-base-debian:bookworm
+args:
+  NEOLINK_VERSION: v0.6.2
+labels:
+  org.opencontainers.image.title: Neolink Home Assistant Add-on
+  org.opencontainers.image.description: Reolink proprietary camera protocol to RTSP bridge
+  org.opencontainers.image.source: https://github.com/mildman1848/home-assistant-addons
+  org.opencontainers.image.licenses: MIT
