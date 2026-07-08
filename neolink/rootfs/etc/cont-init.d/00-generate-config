@@ -2,36 +2,34 @@
 # shellcheck shell=bash
 set -euo pipefail
 
-CONFIG_PATH="/data/options.json"
-NEOLINK_CONFIG="/etc/neolink.toml"
+CONFIG_PATH="${CONFIG_PATH:-/data/options.json}"
+NEOLINK_CONFIG="${NEOLINK_CONFIG:-/etc/neolink.toml}"
+REDACTED_CONFIG="${REDACTED_CONFIG:-/config/neolink.redacted.toml}"
 LOG_LEVEL="$(jq -r '.log_level // "info"' "${CONFIG_PATH}")"
 
-mkdir -p /config /etc
+mkdir -p "$(dirname "${REDACTED_CONFIG}")" "$(dirname "${NEOLINK_CONFIG}")"
 
 bashio::log.info "Generating Neolink configuration"
+
+toml_string() {
+    jq -nr --arg value "$1" '$value | @json'
+}
 
 {
     bind="$(jq -r '.bind // "0.0.0.0"' "${CONFIG_PATH}")"
     bind_port="$(jq -r '.bind_port // 8554' "${CONFIG_PATH}")"
-
-    printf 'bind = "%s"
-' "${bind}"
-    printf 'bind_port = %s
-
-' "${bind_port}"
-
     users_count="$(jq '.rtsp_users | length' "${CONFIG_PATH}")"
+
+    printf 'bind = %s\n' "$(toml_string "${bind}")"
+    printf 'bind_port = %s\n\n' "${bind_port}"
+
     if [[ "${users_count}" -gt 0 ]]; then
         jq -c '.rtsp_users[]' "${CONFIG_PATH}" | while read -r user; do
             name="$(jq -r '.name' <<<"${user}")"
             password="$(jq -r '.password' <<<"${user}")"
-            printf '[[users]]
-'
-            printf 'name = "%s"
-' "${name}"
-            printf 'pass = "%s"
-
-' "${password}"
+            printf '[[users]]\n'
+            printf 'name = %s\n' "$(toml_string "${name}")"
+            printf 'pass = %s\n\n' "$(toml_string "${password}")"
         done
     fi
 
@@ -42,33 +40,26 @@ bashio::log.info "Generating Neolink configuration"
         address="$(jq -r '.address' <<<"${camera}")"
         stream="$(jq -r '.stream // "both"' <<<"${camera}")"
 
-        printf '[[cameras]]
-'
-        printf 'name = "%s"
-' "${name}"
-        printf 'username = "%s"
-' "${username}"
-        printf 'password = "%s"
-' "${password}"
-        printf 'address = "%s"
-' "${address}"
+        printf '[[cameras]]\n'
+        printf 'name = %s\n' "$(toml_string "${name}")"
+        printf 'username = %s\n' "$(toml_string "${username}")"
+        printf 'password = %s\n' "$(toml_string "${password}")"
+        printf 'address = %s\n' "$(toml_string "${address}")"
         if [[ "${stream}" != "both" ]]; then
-            printf 'stream = "%s"
-' "${stream}"
+            printf 'stream = %s\n' "$(toml_string "${stream}")"
         fi
         if [[ "${users_count}" -gt 0 ]]; then
-            printf 'permitted_users = [ "anyone" ]
-'
+            permitted_users="$(jq -c '[.rtsp_users[].name]' "${CONFIG_PATH}")"
+            printf 'permitted_users = %s\n' "${permitted_users}"
         fi
-        printf '
-'
+        printf '\n'
     done
 } > "${NEOLINK_CONFIG}"
 
 chmod 0600 "${NEOLINK_CONFIG}"
 
 # Store a redacted copy for easier support/debugging.
-sed -E 's/(password|pass) = ".*"/ = "REDACTED"/' "${NEOLINK_CONFIG}" > /config/neolink.redacted.toml
+sed -E 's/^(password|pass) = .*/\1 = "REDACTED"/' "${NEOLINK_CONFIG}" > "${REDACTED_CONFIG}"
 
 bashio::log.info "Neolink config generated at ${NEOLINK_CONFIG}"
 bashio::log.debug "Configured log level: ${LOG_LEVEL}"

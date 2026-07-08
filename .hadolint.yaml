@@ -1,3 +1,4 @@
+---
 ignored:
   # Home Assistant add-ons use ARG BUILD_FROM + build.yaml, so Hadolint cannot see the pinned base image.
   - DL3006

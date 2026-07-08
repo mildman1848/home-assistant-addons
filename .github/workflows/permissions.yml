@@ -38,5 +38,14 @@ jobs:
               echo "::error file=${file}::File must be executable"
               failed=1
             fi
-          done < <(find . -type f             \( -path '*/rootfs/etc/services.d/*/run'             -o -path '*/rootfs/etc/services.d/*/finish'             -o -path '*/rootfs/etc/services.d/*/check'             -o -path '*/rootfs/etc/cont-init.d/*' \) -print0)
+          done < <(
+            find . -type f \
+              \( \
+                -path '*/rootfs/etc/services.d/*/run' \
+                -o -path '*/rootfs/etc/services.d/*/finish' \
+                -o -path '*/rootfs/etc/services.d/*/check' \
+                -o -path '*/rootfs/etc/cont-init.d/*' \
+              \) \
+              -print0
+          )
           exit "$failed"

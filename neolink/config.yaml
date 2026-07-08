@@ -1,6 +1,6 @@
 ---
 name: Neolink
-version: 0.1.1
+version: 0.1.2
 slug: neolink
 description: Reolink proprietary camera protocol to RTSP bridge
 url: https://github.com/mildman1848/home-assistant-addons/tree/main/neolink

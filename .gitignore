@@ -14,3 +14,9 @@ build/
 dist/
 *.tar
 *.tar.gz
+
+# Python/local test artifacts
+.venv/
+.pytest_cache/
+__pycache__/
+*.py[cod]

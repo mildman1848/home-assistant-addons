@@ -22,11 +22,11 @@ https://github.com/mildman1848/home-assistant-addons
 - no secrets in Git
 - clear `schema` validation
 - stdout/stderr logging
-- GitHub primary, Codeberg mirror planned
+- GitHub primary, Codeberg mirror active
 
 ## Codeberg mirror
 
-Planned mirror:
+Active mirror:
 
 ```text
 https://codeberg.org/mildman1848/home-assistant-addons

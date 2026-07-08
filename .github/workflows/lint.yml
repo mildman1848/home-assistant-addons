@@ -15,12 +15,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
       - name: Install lint tools
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck yamllint
+          python -m pip install --upgrade pip pytest
       - name: YAML lint
         run: yamllint .
       - name: Shellcheck
         run: |
-          find . -type f             \( -name '*.sh' -o -path '*/rootfs/etc/services.d/*/run' -o -path '*/rootfs/etc/cont-init.d/*' \)             -print0 | xargs -0 -r shellcheck
+          find . -type f \
+            \( \
+              -name '*.sh' \
+              -o -path '*/rootfs/etc/services.d/*/run' \
+              -o -path '*/rootfs/etc/cont-init.d/*' \
+            \) \
+            -print0 | xargs -0 -r shellcheck
+      - name: Python tests
+        run: pytest -q
